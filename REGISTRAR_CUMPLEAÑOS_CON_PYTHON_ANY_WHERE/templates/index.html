@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cumpleaños</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        h1 span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .mensaje {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .mensaje.exito {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .mensaje.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .section-title {
+            color: #333;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .persona-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .persona-info {
+            flex: 1;
+        }
+        
+        .persona-info strong {
+            color: #333;
+        }
+        
+        .persona-info .especialidad {
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .persona-info .fecha {
+            color: #888;
+            font-size: 0.9em;
+        }
+        
+        .btn-eliminar {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+        
+        .btn-eliminar:hover {
+            background: #c82333;
+        }
+        
+        .cumpleaneros {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .badge {
+            background: #ffc107;
+            color: #333;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        #listaPersonas {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎂 <span>Registro de Cumpleaños</span></h1>
+        
+        <!-- Formulario de registro -->
+        <form id="registroForm">
+            <div class="form-group">
+                <label for="nombre_completo">Nombre Completo</label>
+                <input type="text" id="nombre_completo" name="nombre_completo" required placeholder="Ej: Juan Pérez">
+            </div>
+            
+            <div class="form-group">
+                <label for="especialidad">Especialidad</label>
+                <input type="text" id="especialidad" name="especialidad" required placeholder="Ej: Ingeniería de Software">
+            </div>
+            
+            <div class="form-group">
+                <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+            </div>
+            
+            <button type="submit" class="btn">Registrar Persona</button>
+        </form>
+        
+        <!-- Mensaje de respuesta -->
+        <div id="mensaje" class="mensaje"></div>
+        
+        <!-- Sección de cumpleañeros de hoy -->
+        <h2 class="section-title">🎉 Cumpleañeros de Hoy</h2>
+        <div id="cumpleanerosHoy">
+            <div class="loading">Cargando...</div>
+        </div>
+        
+        <!-- Lista de todas las personas -->
+        <h2 class="section-title">📋 Todas las Personas Registradas</h2>
+        <div id="listaPersonas">
+            <div class="loading">Cargando...</div>
+        </div>
+    </div>
+    
+    <script>
+        // Función para mostrar mensajes
+        function mostrarMensaje(texto, tipo) {
+            const mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.textContent = texto;
+            mensajeDiv.className = 'mensaje ' + tipo;
+            
+            setTimeout(() => {
+                mensajeDiv.className = 'mensaje';
+            }, 5000);
+        }
+        
+        // Función para cargar todas las personas
+        async function cargarPersonas() {
+            try {
+                const response = await fetch('/personas');
+                const personas = await response.json();
+                
+                const listaDiv = document.getElementById('listaPersonas');
+                if (personas.length === 0) {
+                    listaDiv.innerHTML = '<p style="text-align:center;color:#888;">No hay personas registradas aún</p>';
+                    return;
+                }
+                
+                let html = '';
+                personas.forEach(persona => {
+                    html += `
+                        <div class="persona-card">
+                            <div class="persona-info">
+                                <strong>${persona.nombre_completo}</strong><br>
+                                <span class="especialidad">${persona.especialidad}</span><br>
+                                <span class="fecha">🎂 ${persona.fecha_nacimiento}</span>
+                            </div>
+                            <button class="btn-eliminar" onclick="eliminarPersona(${persona.id})">Eliminar</button>
+                        </div>
+                    `;
+                });
+                listaDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('listaPersonas').innerHTML = 
+                    '<p style="text-align:center;color:red;">Error al cargar los datos</p>';
+            }
+        }
+        
+        // Función para cargar cumpleañeros de hoy
+        async function cargarCumpleaneros() {
+            try {
+                const response = await fetch('/cumpleanos/hoy');
+                const data = await response.json();
+                
+                const div = document.getElementById('cumpleanerosHoy');
+                if (data.cumpleaneros.length === 0) {
+                    div.innerHTML = '<p style="text-align:center;color:#888;">🎂 No hay cumpleañeros hoy</p>';
+                    return;
+                }
+                
+                let html = '';
+                data.cumpleaneros.forEach(persona => {
+                    html += `
+                        <div class="persona-card cumpleaneros">
+                            <div class="persona-info">
+                                <strong>${persona.nombre_completo}</strong><br>
+                                <span class="especialidad">${persona.especialidad}</span><br>
+                                <span class="fecha">🎂 ${persona.fecha_nacimiento} <span class="badge">¡Hoy es su cumpleaños!</span></span>
+                            </div>
+                        </div>
+                    `;
+                });
+                div.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('cumpleanerosHoy').innerHTML = 
+                    '<p style="text-align:center;color:red;">Error al cargar los cumpleañeros</p>';
+            }
+        }
+        
+        // Función para eliminar una persona
+        async function eliminarPersona(id) {
+            if (!confirm('¿Estás seguro de eliminar este registro?')) return;
+            
+            try {
+                const response = await fetch(`/eliminar/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    mostrarMensaje('Persona eliminada exitosamente', 'exito');
+                    cargarPersonas();
+                    cargarCumpleaneros();
+                } else {
+                    const error = await response.json();
+                    mostrarMensaje(error.error || 'Error al eliminar', 'error');
+                }
+            } catch (error) {
+                mostrarMensaje('Error al eliminar la persona', 'error');
+            }
+        }
+        
+        // Manejar el envío del formulario
+        document.getElementById('registroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/registrar', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mostrarMensaje(data.mensaje, 'exito');
+                    this.reset();
+                    cargarPersonas();
+                    cargarCumpleaneros();
+                } else {
+                    mostrarMensaje(data.error || 'Error al registrar', 'error');
+                }
+            } catch (error) {
+                mostrarMensaje('Error de conexión', 'error');
+            }
+        });
+        
+        // Cargar datos al iniciar
+        cargarPersonas();
+        cargarCumpleaneros();
+        
+        // Recargar cumpleañeros cada minuto
+        setInterval(cargarCumpleaneros, 60000);
+    </script>
+</body>
+</html>
